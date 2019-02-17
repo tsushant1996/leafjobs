@@ -5,34 +5,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const http = require('http');
+var mongoose = require('mongoose');
 
 var index = require('./routes/index');
-var products = require('./routes/products');
-var categories = require('./routes/category');
-var carts = require('./routes/carts');
+const cronService = require('./cron_jobs/cronService');
+const emailService = require('./emailService');
+
+const queueService   = require('./queueService');
+queueService.orderNotifications();
+
 
 var app = express();
-
-
-// Add headers
-app.use(function (req, res, next) {
-
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
-  next();
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -47,9 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/api/products', products);
-app.use('/api/category', categories);
-app.use('/api/carts', carts);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -57,6 +38,13 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
+
+//++++++++++++++++Cron Jobs +++++++++++++++++++++++++++++//
+
+cronService.assignJob();
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -69,9 +57,13 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+mongoose.connect('mongodb://sushant:sushant@ds119688.mlab.com:19688/nodeauth', {
+  
+});
+
 
 //Set Port
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || '4200';
 app.set('port', port);
 
 const server = http.createServer(app);

@@ -6,15 +6,18 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "amqplib": "^0.5.3",
+    "async": "*",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "jade": "~1.11.0",
-    "morgan": "~1.5.1",
-    "serve-favicon": "~2.4.5",
     "mongodb": "^3.0.1",
     "mongoose": "*",
-    "async": "*"
+    "morgan": "~1.5.1",
+    "node-cron": "^2.0.3",
+    "nodemailer": "^5.1.1",
+    "serve-favicon": "~2.4.5"
   }
 }
